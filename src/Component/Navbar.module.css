@@ -1,0 +1,46 @@
+.container{
+    padding: 30px;
+    border: 1px solid black;
+    max-height: 45px;
+    display: flex;
+    flex-direction: auto;
+    justify-content: space-between;
+    align-items: center;
+
+}
+.Logo{
+    display: flex;
+    align-items: center;
+}
+.container span{
+    position: relative;
+    font-size: 1.4rem;
+    cursor: pointer;
+
+}
+.navItem{
+    width: 25%;
+    display: flex;
+    justify-content: space-between;
+}
+.search{
+    /* border: 1px solid black; */
+    width: 25%;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.cart{
+    display: flex;
+    align-items: center;
+    width: 15%;
+    position: relative;
+    justify-content: space-between;
+}
+.wishlist{
+    display: flex;
+    align-items: center;
+    width: 20%;
+    position: relative;
+    justify-content: space-between;
+}

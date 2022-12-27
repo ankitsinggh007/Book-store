@@ -5,9 +5,15 @@ import banner from "../Media/banner.png";
 import {Button, TextField} from "@mui/material"
 import Creative from "../Media/Creative.svg"
 import Bio from "../Media/Bio.svg"
+import Story from "../Media/Story.svg"
+import Novel from "../Media/Novel.svg"
+import Kids from "../Media/Kids.svg"
+import Horror from "../Media/Horror.svg"
+import Crime from "../Media/Crime.svg"
 import Romance from "../Media/Romance.svg"
 import health from "../Media/health.svg"
 import Food from "../Media/Food.svg"
+import Religion from "../Media/Religion.svg"
 import ArrowForwardIosTwoToneIcon from '@mui/icons-material/ArrowForwardIosTwoTone';
 import { positions } from '@mui/system';
 import Slider from "./Slider"
@@ -15,42 +21,81 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import TwitterIcon from '@mui/icons-material/Twitter';
+import {Link} from "react-router-dom";
+
+export const categories=[
+  {
+    id:1,
+    color:"2,176,78",
+    icon:Creative,
+    subtitle:"Arts & Photography",
+  },
+  
+  {
+    id:2,
+    color:"239,32,77",
+    icon:Romance,
+    subtitle:"Romance",
+  },
+  {
+    id:3,
+    color:`254,131,77`,
+    icon:Bio,
+    subtitle:"Biography",
+  },
+  {
+    id:4,
+    color:`226,145,168`,
+    icon:health,
+    subtitle:"Health",
+  },
+  {
+    id:5,
+    color:`255,213,158`,
+    icon:Food,
+    subtitle:"Food & Drink",
+  },
+  {
+    id:6,
+    color:`0,0,0`,
+    icon:Novel,
+    subtitle:"Novel",
+  },
+  {
+    id:7,
+    color:`89,36,39`,
+    icon:Horror,
+    subtitle:"Horror",
+  },
+  {
+    id:8,
+    color:`255,194,48`,
+    icon:Story,
+    subtitle:"Story",
+  },
+  {
+    id:9,
+    color:`102,117,127`,
+    icon:Crime,
+    subtitle:"Crime",
+  },
+  {
+    id:11,
+    color:`255,55,94`,
+    icon:Religion,
+    subtitle:"Religion",
+  },
+  {
+    id:12,
+    color:`255,213,158`,
+    icon:Kids,
+    subtitle:"Kids",
+  }
+];
+
 function MainBody() {
-  const categories=[
-    {
-      id:1,
-      color:"2,176,78",
-      icon:Creative,
-      subtitle:"Arts & Photography",
-    },
-    
-    {
-      id:1,
-      color:"239,32,77",
-      icon:Romance,
-      subtitle:"Romance",
-    },
-    {
-      id:1,
-      color:`254,131,77`,
-      icon:Bio,
-      subtitle:"Biography",
-    },
-    {
-      id:1,
-      color:`226,145,168`,
-      icon:health,
-      subtitle:"Health",
-    },
-    {
-      id:1,
-      color:`255,213,158`,
-      icon:Food,
-      subtitle:"Food & Drink",
-    }
-  ];
-  
-  
+
+  const obj=categories.filter((obj,index)=>index<5);
   
   return (
     <>
@@ -58,15 +103,15 @@ function MainBody() {
         <span>
             <h2 className={classes.feature}>The BookStore Features'</h2><p>
 you're looking for a good read!, you've come to the right <b>place!</b></p>
-<Button variant="contained" style={{backgroundColor:"#161619",padding:"15px",fontSize:"1.2rem"}}>See More</Button>
+<Link to={"/categories"} style={{textDecoration:"none", color:"black"}}><Button variant="contained" style={{backgroundColor:"#161619",padding:"15px",fontSize:"1.2rem"}}>See More</Button></Link>
 </span>
 <span className={classes.image}><img src={banner}/></span>
     </div>
     <div className={classes.section2}>
-      <div className={classes.header}><span style={{fontSize:"2rem"}}>Featured Categories</span><span className={classes.link} style={{fontSize:"1rem",display:"flex",cursor:"pointer"}}><span>All Categories</span><span><ArrowForwardIosTwoToneIcon /></span></span></div>
+      <div className={classes.header}><span style={{fontSize:"2rem"}}>Featured Categories</span><Link to={"/categories"} style={{textDecoration:"none", color:"black"}}><span className={classes.link} style={{fontSize:"1rem",display:"flex",cursor:"pointer"}}><span>All Categories</span><span><ArrowForwardIosTwoToneIcon /></span></span></Link></div>
       <div className={classes.categories}>
         {
-          categories.map((obj,index)=>{
+          obj.map((obj,index)=>{
         return(
                <div className={classes.cat_items} style={{backgroundColor: `rgba(${obj.color} ,.60)`}}>
                 <img className={classes.cat_items_icons} src={obj.icon} width="35%"/>
@@ -116,4 +161,4 @@ United States</div>
   )
 }
 
-export default MainBody
+export default MainBody;

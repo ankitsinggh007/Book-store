@@ -1,5 +1,7 @@
 import { Button } from '@mui/material'
-import React from 'react'
+import React,{useContext} from 'react'
+import {Avatar} from '@mui/material';
+import { User } from '../App';
 import {TextField} from "@mui/material"
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import {SearchIcon} from '@mui/icons-material';
@@ -8,7 +10,10 @@ import classes from "./Navbar.module.css"
 import SearchSharpIcon from '@mui/icons-material/SearchSharp';
 import tbc from "../Media/TBC.png"
 import { Link } from 'react-router-dom';
+import { pink } from '@mui/material/colors';
 function Navbar() {
+const {Creadential, setCreadential,createUser}=useContext(User);
+  console.log(Creadential)
   return (
     <div className={classes.container}>
      <Link to="/" style={{color:"black",textDecoration:"none"}}><div className={classes.Logo} >
@@ -24,8 +29,21 @@ function Navbar() {
      <div className={classes.navItem}>
         <span className={classes.cart}><Link to={"/cart"} style={{textDecoration:"none", color:"black"}}><span>Cart </span></Link><span><AddShoppingCartIcon style={{position:"relative",top:"5px"}}/></span></span>
         <span className={classes.wishlist}><Link to={"/wishlist"}style={{textDecoration:"none", color:"black"}}><span>Wishlist</span></Link><span> <FavoriteSharpIcon style={{position:"relative",top:"5px"}}/></span></span>
-        <Link to={"/signup"}><Button variant="contained" style={{backgroundColor:"#161619",padding:"12px",fontSize:"1.2rem"}}>Register</Button></Link>
+<div>
+{
+  !Creadential.isAuthrized && 
 
+<Link to={"/signup"}><Button variant="contained" style={{backgroundColor:"#161619",padding:"12px",fontSize:"1.2rem"}}>Register</Button></Link>
+}
+{
+  Creadential.isAuthrized && 
+<Avatar
+  sx={{ bgcolor:pink[400] }}
+  alt={"ankit singh"}
+  src="/broken-image.jpg"
+/>
+}
+</div>
     </div>
     </div>
 

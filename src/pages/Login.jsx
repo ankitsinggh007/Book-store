@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
+import { User } from '../App';
+import { Alert } from 'reactstrap';
 import IconButton from '@mui/material/IconButton';
 import Input from '@mui/material/Input';
 import FilledInput from '@mui/material/FilledInput';
@@ -11,32 +13,51 @@ import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import "./Login.css"
 import tbc from "../Media/TBC.png"
 import { Button } from '@mui/material';
+import classes from "./Login.module.css"
 function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false)
     const handleClickShowPassword = () => setShowPassword((show) => !show);
+    const {Creadential, setCreadential,createUser,verifyCredential}=useContext(User);
+    const [Message, setMessage] = useState("")
 
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
-      }; 
 
     const handleSubmit = (event) => {
     event.preventDefault();
+  const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+     if(Creadential.email!==""){
+      if(regex.test(Creadential.email)){
+        if(Creadential.Password!==""){
+          verifyCredential(); 
+        }
+        else{
+          setMessage("fill password");
+        }
+      }else{
+        setMessage("fill valid email");
+      }
+
+     }
+     else{
+      setMessage("fill email");
+     }    
   };
 
   return (
     
-    <form onSubmit={handleSubmit} className="form">
-          <span className='Logo' ><img src={tbc} height="60px" width="60px"/></span>
+    <form onSubmit={handleSubmit} className={classes.form}>
+          <span className={classes.Logo} ><img className={classes.img} src={tbc} height="60px" width="60px"/></span>
+          {Message.length != 0 && <Alert color="danger">
+                        {Message}
+                    </Alert>}
         <FormControl sx={{ m: 1, width: '35ch' }} variant="standard">
         <InputLabel htmlFor="input-with-icon-adornment">
           With a start adornment
         </InputLabel>
         <Input
+          onChange={(e)=>{setCreadential({...Creadential,email:e.target.value})}}
           id="input-with-icon-adornment"
           startAdornment={
             <InputAdornment position="start">
@@ -49,6 +70,7 @@ function Login() {
       <FormControl sx={{ m: 1, width: '35ch' }} variant="standard">
           <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
           <Input
+           onChange={(e)=>{setCreadential({...Creadential,Password:e.target.value})}}
             id="standard-adornment-password"
             type={showPassword ? 'text' : 'password'}
             endAdornment={
@@ -56,7 +78,7 @@ function Login() {
                 <IconButton
                   aria-label="toggle password visibility"
                   onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
+                 
                 >
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
@@ -67,7 +89,7 @@ function Login() {
         </FormControl>
       <br />
       <div >
-          <Button variant="contained" style={{backgroundColor:"#161619",marginLeft:"40%",padding:"12px",fontSize:"1.2rem"}}>Log In</Button>
+          <Button type='submit' variant="contained" style={{backgroundColor:"#161619",marginLeft:"40%",padding:"12px",fontSize:"1.2rem"}}>Log In</Button>
         
           </div>
     </form>

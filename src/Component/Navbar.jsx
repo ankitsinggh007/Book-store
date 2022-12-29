@@ -12,8 +12,8 @@ import tbc from "../Media/TBC.png"
 import { Link } from 'react-router-dom';
 import { pink } from '@mui/material/colors';
 function Navbar() {
-const {Creadential, setCreadential,createUser}=useContext(User);
-  console.log(Creadential)
+const {LoggedInUserData, setLoggedInUserData,createUser}=useContext(User);
+  console.log(LoggedInUserData)
   return (
     <div className={classes.container}>
      <Link to="/" style={{color:"black",textDecoration:"none"}}><div className={classes.Logo} >
@@ -31,15 +31,15 @@ const {Creadential, setCreadential,createUser}=useContext(User);
         <span className={classes.wishlist}><Link to={"/wishlist"}style={{textDecoration:"none", color:"black"}}><span>Wishlist</span></Link><span> <FavoriteSharpIcon style={{position:"relative",top:"5px"}}/></span></span>
 <div>
 {
-  !Creadential.isAuthrized && 
+  !LoggedInUserData.isAuthrized && 
 
 <Link to={"/signup"}><Button variant="contained" style={{backgroundColor:"#161619",padding:"12px",fontSize:"1.2rem"}}>Register</Button></Link>
 }
 {
-  Creadential.isAuthrized && 
+  LoggedInUserData.isAuthrized && 
 <Avatar
   sx={{ bgcolor:pink[400] }}
-  alt={"ankit singh"}
+  alt={LoggedInUserData.firstName}
   src="/broken-image.jpg"
 />
 }

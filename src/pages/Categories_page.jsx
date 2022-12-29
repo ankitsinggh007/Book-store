@@ -1,15 +1,20 @@
 import { ClassNames } from '@emotion/react'
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect,useContext} from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import classes from "./Categories_pages.module.css";
 import BestSelling from '../Component/Data/BestSellingbook';
 import {MdFavoriteBorder} from "react-icons/md"
+import { User } from '../App';
+import { doc, updateDoc } from "firebase/firestore";
+import db from '../Component/Firbase';
 function Categories_page() {
-const Navigate=useNavigate();
-  const API_KEY=`AIzaSyCFwMBb4r146zfcv-IrdUn-vk8_asDkvck`;
+  const {LoggedInUserData,setLoggedInUserData} = useContext(User)
+  const Navigate=useNavigate();
+
+const API_KEY=`AIzaSyCFwMBb4r146zfcv-IrdUn-vk8_asDkvck`;
 const [Data, setData] = useState([]);
 const params=useParams();
-console.log(params,"params");
+ const [Like, setLike] = useState("");
 useEffect( () => {
   const fetchData= async ()=>{
     const response=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${params.params}&maxResults=40&key=${API_KEY}`);
@@ -21,9 +26,31 @@ useEffect( () => {
   setData(result)
 
 
+
   }
   fetchData();
 }, [])
+
+const LikedBook=async(data)=>{
+if(LoggedInUserData.isAuthrized){
+  const obj={
+    thumbnail:data?.imageLinks?.thumbnail,
+    title:data?.title,
+    author:data?.authors[0],
+    language:"English",
+    price:"200",
+  }
+  setLoggedInUserData({...LoggedInUserData,Liked:[...LoggedInUserData.Liked,obj],isbpn:[...LoggedInUserData.isbpn,data.title]});
+  // setLike("s");
+  const washingtonRef = doc(db, "User", LoggedInUserData.id);
+
+// Set the "capital" field of the city 'DC'
+await updateDoc(washingtonRef, {
+  Liked:LoggedInUserData.Liked,
+  isbpn:LoggedInUserData.isbpn
+});
+}
+}
 console.log(Data)
     return (
 <>
@@ -33,10 +60,12 @@ console.log(Data)
         Data.map((Data,index)=>{
           
           return(
-            <div className={classes.Categories_items} onClick={()=>Navigate(`/categories/${params.params}/${Data.volumeInfo.title}`)}>
-            <MdFavoriteBorder className={classes.icon} fontSize={"1.6rem"}  fill='red'/>
+            <div className={classes.Categories_items}>
+<span onClick={()=>LikedBook(Data?.volumeInfo)} >
+<MdFavoriteBorder className={classes.icon} fontSize={"1.6rem"}    fill={LoggedInUserData.isbpn.includes(`${Data?.volumeInfo?.title}`)?"red":"blue"}/>
 
-            <div className={classes.Categories_img} style={{backgroundImage:`url(${Data?.volumeInfo?.imageLinks?.thumbnail})`}} />
+</span>
+            <div className={classes.Categories_img}  onClick={()=>Navigate(`/categories/${params.params}/${Data.volumeInfo.title}`)} style={{backgroundImage:`url(${Data?.volumeInfo?.imageLinks?.thumbnail})`}} />
             <div className={classes.deatils}>
             <span style={{fontSize:"1.2rem"}}>{Data.volumeInfo.title}</span>
             <span style={{fontSize:"1rem",color:"grey"}}>{Data?.volumeInfo?.authors[0]}</span>

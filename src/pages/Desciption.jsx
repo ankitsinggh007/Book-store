@@ -1,11 +1,17 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect,useContext} from 'react';
 import { useParams,Link } from 'react-router-dom';
 import classes from "./Desciption.module.css"
 import { Button } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
+import { doc, updateDoc } from "firebase/firestore";
+import { User } from '../App';
+import db from '../Component/Firbase';
+
+
 function Desciption() {
     const API_KEY=`AIzaSyCFwMBb4r146zfcv-IrdUn-vk8_asDkvck`;
+  const {LoggedInUserData,setLoggedInUserData} = useContext(User)
 
     const [Data, setData] = useState([]);
 
@@ -24,6 +30,27 @@ function Desciption() {
         }
         fetchData();
     }, [])
+const addToCart=async(Data)=>{
+    if(LoggedInUserData.isAuthrized){
+        const obj={
+          thumbnail:Data?.volumeInfo?.imageLinks?.thumbnail,
+          title:Data?.volumeInfo?.title,
+          author:Data?.volumeInfo?.authors[0],
+          language:"English",
+          price:"200",
+        }
+        setLoggedInUserData({...LoggedInUserData,Cart:[...LoggedInUserData.Cart,obj],isbpn_Cart:[...LoggedInUserData.isbpn_Cart,Data?.volumeInfo?.title]});
+        // setLike("s");
+        const washingtonRef = doc(db, "User", LoggedInUserData.id);
+      
+      // Set the "capital" field of the city 'DC'
+      await updateDoc(washingtonRef, {
+        Cart:LoggedInUserData.Cart,
+        isbpn_Cart:LoggedInUserData.isbpn_Cart
+      });
+      }
+}
+
     return (
         <div className={classes.container}>
         <div>
@@ -44,9 +71,16 @@ function Desciption() {
         }
         </div>
         <div className={classes.action}>
-       <Link to={"/cart"} style={{textDecoration:"none", color:"black"}}><Button variant="contained" style={{backgroundColor:"#161619",padding:"15px",fontSize:"1.2rem"}}><ShoppingCartIcon/>&nbsp; Add To Cart</Button></Link>
-       <Link to={"/wishlist"} style={{textDecoration:"none", color:"black"}}><Button variant="contained" style={{backgroundColor:"#161619",padding:"15px",fontSize:"1.2rem"}}><ShoppingBasketIcon/> &nbsp; Buy Now</Button></Link>
+{
+    !LoggedInUserData.isbpn_Cart.includes(Data?.volumeInfo?.title) &&
+       <Button onClick={()=>addToCart(Data)} variant="contained" style={{backgroundColor:"#161619",padding:"15px",fontSize:"1.2rem"}}><ShoppingCartIcon/>&nbsp; Add To Cart</Button>
 
+}
+{
+    LoggedInUserData.isbpn_Cart.includes(Data?.volumeInfo?.title) &&
+       <Button onClick={()=>addToCart(Data)} variant="contained" style={{backgroundColor:"#161619",padding:"15px",fontSize:"1.2rem"}}><ShoppingCartIcon/>&nbsp; In Cart</Button>
+
+}
         </div>
 
         </div>

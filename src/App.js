@@ -1,6 +1,7 @@
 import { createUserWithEmailAndPassword , getAuth, signInWithEmailAndPassword,signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { Route,Routes,Navigate, useNavigate } from "react-router-dom";
 import MainBody from "./Component/MainBody";
+import { query, where,getDoc } from "firebase/firestore";
 import Navbar from "./Component/Navbar";
 import Cart from "./pages/Cart";
 import Login from "./pages/Login";
@@ -9,18 +10,32 @@ import Categories from "./pages/Categories"
 import { useState,useEffect, createContext } from "react";
 import { collection, addDoc } from "firebase/firestore";  
 import DataBase from "./Component/Firbase"
-import { getDocs } from 'firebase/firestore/lite';
+import { getDocs } from 'firebase/firestore';
 import Categories_page from "./pages/Categories_page";
 import Desciption from "./pages/Desciption";
+import Wishlist from "./pages/Wishlist";
 export const User=createContext({});
 function App() {
  const [Data, setData] = useState();
  const API_KEY=`AIzaSyCFwMBb4r146zfcv-IrdUn-vk8_asDkvck`;
   const Navigate=useNavigate();
   const [Creadential, setCreadential] = useState({fname:"",lname:"",email:"",Gender:"",Password:""});
-  const [LoggedInUserData, setLoggedInUserData] = useState({fname:"",lname:"",email:"",Gender:"",isAuthrized:false,Liked:[],Cart:[]});
+  const [LoggedInUserData, setLoggedInUserData] = useState({id:"",firstName:"",lastName:"",email:"",Gender:"",isAuthrized:false,Liked:[],Cart:[],isbpn:[],isbpn_Cart:[]});
 
  const auth = getAuth();
+//  Fetch Data
+const FetchData= async (email)=>{
+  console.log(email,"email")
+  const citiesRef = collection(DataBase, "User");
+  const q = query(citiesRef, where("email", "==", `${email}`));
+  console.log(q,"q");
+  const querySnapshot = await getDocs(q);
+  console.log(querySnapshot,"querySnapshot")
+  querySnapshot.forEach((doc) => {
+    console.log(doc.id, " => ", doc.data());
+    setLoggedInUserData({...LoggedInUserData,...doc.data(),isAuthrized:true,id:doc.id});
+  });
+}
 // Creat user in DataBase
    const CreateUserInDataBase = async ()=>{
     const DocRef= await addDoc(collection(DataBase,"User"),{
@@ -55,10 +70,8 @@ const verifyCredential=async()=>{
     .then((userCredential) => {
       const user = userCredential.user;
       console.log(user.email,"user");
-      setLoggedInUserData({
-        ...LoggedInUserData,
-        email:user.email,
-      })
+      FetchData(user.email);
+      
       Navigate("/")
     })
     .catch((error) => {
@@ -70,10 +83,10 @@ const verifyCredential=async()=>{
     });
   
 }
-console.log(Creadential);
+console.log(LoggedInUserData);
  
   return (
-    <User.Provider value={{Creadential,setCreadential,createUser,verifyCredential}}>
+    <User.Provider value={{Creadential,setCreadential,createUser,verifyCredential,LoggedInUserData,setLoggedInUserData}}>
       <Navbar/>
       <Routes>
       { !Creadential.isAuthrized && <Route path={'/login'} element={<Login/>}/>}
@@ -81,6 +94,7 @@ console.log(Creadential);
       <Route path={'/'} element={<MainBody/>}/>
       <Route path={'/cart'} element={<Cart/>}/>
       <Route path={'/categories'} element={<Categories/>}/>
+      <Route path={'/wishlist'} element={<Wishlist />}/>
       <Route path={'/*'} element={<Navigate to={"/"}/>}/>
       <Route path={'/categories/:params'} element={<Categories_page/>}/>
       <Route path={'/categories/:params/:name'} element={<Desciption/>}/>
